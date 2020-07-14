@@ -19,3 +19,5 @@ struct ActivityIndicator: UIViewRepresentable {
     
     func updateUIView(_ uiView: UIActivityIndicatorView, context: UIViewRepresentableContext<ActivityIndicator>) {}
 }
+
+

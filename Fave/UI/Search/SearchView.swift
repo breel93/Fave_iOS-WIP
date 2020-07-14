@@ -9,23 +9,32 @@
 import SwiftUI
 
 struct SearchView: View {
-    @ObservedObject var viewModel = SearchViewModel()
-    var body: some View {
-        NavigationView(content: {
-            VStack{
-                SearchBarView(text: $viewModel.searchText)
-                    .padding([.leading, .trailing], 8)
-                ArticlesList(articles: viewModel.articles)
-            }
-            .navigationBarTitle(Text(Constants.title))
-            
-        })
-    }
+  @ObservedObject var viewModel = SearchViewModel()
+  var body: some View {
+    NavigationView(content: {
+      VStack{
+        SearchBarView(searchText: $viewModel.searchText)
+          .padding([.leading, .trailing], 8)
+        
+        ArticlesList(articles: viewModel.articles)
+      }
+      .navigationBarTitle(Text(Constants.title), displayMode:.automatic)
+      .resignKeyboardOnDragGesture()
+    })
+  }
 }
 
 private extension SearchView {
-    
-    struct Constants {
-        static let title = "Search"
-    }
+  
+  struct Constants {
+    static let title = "Search"
+  }
 }
+
+#if DEBUG
+struct SearchView_Previews: PreviewProvider {
+  static var previews: some View {
+    SearchView(viewModel: SearchViewModel())
+  }
+}
+#endif

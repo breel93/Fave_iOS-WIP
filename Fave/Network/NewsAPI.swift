@@ -9,53 +9,54 @@
 import Foundation
 
 enum NewsAPI : EndpointProtocol {
-    case getTopHeadlines
-    case getArticlesCategory(_ category: String)
-    case getSources
-    case getArticlesFromSource(_ source: String)
-    case searchForArcticles (searchFilter : String)
-    
-    var baseURL: String{
-        return "https://newsapi.org/v2"
+  
+  case getTopHeadlines
+  case getArticlesCategory(_ category: String, _ pageSize: String)
+  case getSources(_ category: String)
+  case getArticlesFromSource(_ source: String)
+  case searchForArcticles (searchFilter : String)
+  
+  var baseURL: String{
+    return "https://newsapi.org/v2"
+  }
+  var absoluteURL: String {
+    switch self {
+      case .getTopHeadlines, .getArticlesCategory:
+        return baseURL + "/top-headlines"
+      
+      case .getSources:
+        return baseURL + "/sources"
+      
+      case .getArticlesFromSource, .searchForArcticles:
+        return baseURL + "/everything"
     }
-    var absoluteURL: String {
-           switch self {
-           case .getTopHeadlines, .getArticlesCategory:
-               return baseURL + "/top-headlines"
-               
-           case .getSources:
-               return baseURL + "/sources"
-               
-           case .getArticlesFromSource, .searchForArcticles:
-               return baseURL + "/everything"
-           }
+  }
+  
+  var params: [String: String] {
+    switch self {
+      case .getTopHeadlines:
+        return ["country": region]
+      
+      case let .getArticlesCategory(category, pageSize):
+        return ["country": region, "category": category, "pageSize": pageSize]
+      
+      case let .getSources(category):
+        return ["category": category, "language": locale, "country": region]
+      
+      case let .getArticlesFromSource(source):
+        return ["sources": source, "language": locale]
+      
+      case let .searchForArcticles(searchFilter):
+        return ["q": searchFilter, "language": locale]
     }
-       
-    var params: [String: String] {
-           switch self {
-           case .getTopHeadlines:
-               return ["country": region]
-               
-           case let .getArticlesCategory(category):
-               return ["country": region, "category": category]
-               
-           case .getSources:
-               return ["language": locale, "country": region]
-               
-           case let .getArticlesFromSource(source):
-               return ["sources": source, "language": locale]
-               
-           case let .searchForArcticles(searchFilter):
-            return ["q": searchFilter, "language": locale]
-           }
-    }
-       
-    var headers: [String: String] {
-        return [
-            "X-Api-Key": Container.newsAPIKey,
-            "Content-type": "application/json",
-            "Accept": "application/json"
-        ]
-    }
-    
+  }
+  
+  var headers: [String: String] {
+    return [
+      "X-Api-Key": Container.newsAPIKey,
+      "Content-type": "application/json",
+      "Accept": "application/json"
+    ]
+  }
+  
 }

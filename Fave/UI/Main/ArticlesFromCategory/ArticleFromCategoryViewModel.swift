@@ -1,5 +1,5 @@
 //
-//  SourceArticlesViewModel.swift
+//  ArtcileFromCategoryViewModel.swift
 //  Fave
 //
 //  Created by Kola Emiola on 12/06/2020.
@@ -9,19 +9,18 @@
 import SwiftUI
 import Combine
 
-final class SourceArticlesViewModel: ObservableObject {
-  private let apiProvider  = APIProvider<NewsAPI>()
+final class ArticleFromCategoryViewModel: ObservableObject {
+  private let apiProvider = APIProvider<NewsAPI>()
   private var bag = Set<AnyCancellable>()
-  
-  @Published private(set) var articles: Articles=[]
-  
-  func getArticles(from source: String){
-    apiProvider.getData(from: .getArticlesFromSource(source))
+  @Published private(set) var articles: Articles = []
+  func getArticles(from category: String, pageSize: String){
+    apiProvider.getData(from: NewsAPI.getArticlesCategory(category, pageSize))
       .decode(type: ArticlesResponse.self, decoder: Container.jsonDecoder)
-      .map { $0.articles }
+      .map{ $0.articles }
       .replaceError(with: [])
       .receive(on: RunLoop.main)
       .assign(to: \.articles, on: self)
       .store(in: &bag)
   }
+  
 }

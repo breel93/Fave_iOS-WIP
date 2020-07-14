@@ -8,13 +8,25 @@
 
 import SwiftUI
 
-struct SourceRoww: View {
+struct SourceRow: View {
     let source: Source
     var body: some View {
-        HStack{
-            Text(source.name)
-        }
+      VStack(alignment: .leading){
+          Text(source.name)
+            .font(.headline)
+            .fontWeight(.semibold)
+            .multilineTextAlignment(.leading)
+        Text(source.description)
+          .font(.footnote)
+          .fontWeight(.light)
+      }
     }
 }
 
 
+
+struct SourceRow_Previews: PreviewProvider {
+  static var previews: some View {
+    SourceRow(source: testSource[0])
+  }
+}

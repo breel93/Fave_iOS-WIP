@@ -10,21 +10,22 @@ import SwiftUI
 import Combine
 
 final class SourcesViewModel: ObservableObject {
-    
-    private let apiProvider = APIProvider<NewsAPI>()
-    
-    private var bag = Set<AnyCancellable>()
-    
-    @Published private(set) var sources: Sources = []
-    
-    func getSources(){
-        apiProvider.getData(from: .getSources)
-            .decode(type: SourcesResponse.self, decoder: Container.jsonDecoder)
-            .map { $0.sources }
-            .replaceError(with: [])
-            .receive(on: RunLoop.main)
-            .assign(to: \.sources, on: self)
-            .store(in: &bag)
-    }
+  
+  private let apiProvider = APIProvider<NewsAPI>()
+  
+  private var bag = Set<AnyCancellable>()
+  
+  @Published private(set) var sources: Sources = []
+  
+  func getSources(from category: String){
+    apiProvider.getData(from: NewsAPI.getSources(category))
+      .decode(type: SourcesResponse.self, decoder: Container.jsonDecoder)
+      .map { $0.sources }
+      .replaceError(with: [])
+      .receive(on: RunLoop.main)
+      .assign(to: \.sources, on: self)
+      .store(in: &bag)
+  }
+  
 }
 

@@ -9,21 +9,29 @@
 import SwiftUI
 
 struct ArticleFromCategoryView: View {
-    @ObservedObject var viewModel = ArtcileFromCategoryViewModel()
-    let category: String
-    var body: some View {
-        VStack{
-            if viewModel.articles.isEmpty{
-                ActivityIndicator()
-                .frame(width: UIScreen.main.bounds.width,
-                       height: 50,
-                        alignment: .center)
-            }else{
-                ArticlesList(articles: viewModel.articles)
-            }
-        }.onAppear{
-            self.viewModel.getArticles(from: self.category)
-        }
+  @ObservedObject var viewModel = ArticleFromCategoryViewModel()
+
+  let category: String
+  var body: some View {
+    VStack{
+      if viewModel.articles.isEmpty{
+        ActivityIndicator()
+          .frame(width: UIScreen.main.bounds.width,
+                 height: 50,
+                 alignment: .center)
+      }else{
+        ArticlesList(articles: viewModel.articles)
+      }
     }
+    .onAppear{
+      self.viewModel.getArticles(from: self.category, pageSize: "20")
+    }
+  }
 }
 
+
+struct ArticleFromCategoryView_Previews: PreviewProvider {
+  static var previews: some View {
+    ArticleFromCategoryView(category: "Techology")
+  }
+}

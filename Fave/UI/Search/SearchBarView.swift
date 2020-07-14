@@ -7,60 +7,86 @@
 //
 
 import SwiftUI
-import UIKit
 
-struct SearchBarView: UIViewRepresentable {
-    @Binding var text: String
-       
-       func makeCoordinator() -> SearchBarView.Coordinator {
-           return Coordinator(text: $text)
-       }
-       
-       func makeUIView(context: UIViewRepresentableContext<SearchBarView>) -> UISearchBar {
-           let searchBar = UISearchBar()
-           searchBar.delegate = context.coordinator
-           searchBar.backgroundImage = UIImage()
-           searchBar.placeholder = Constants.placeholder
-           return searchBar
-       }
-       
-       func updateUIView(_ uiView: UISearchBar, context: UIViewRepresentableContext<SearchBarView>) {
-       }
-}
-
-extension SearchBarView {
-    
-    class Coordinator: NSObject, UISearchBarDelegate {
-
-        @Binding var text: String
-
-        init(text: Binding<String>) {
-            _text = text
-        }
-
-        func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-            searchBar.setShowsCancelButton(true, animated: true)
-        }
+struct SearchBarView: View {
+  
+  @Binding var searchText: String
+  @State private var showCancelButton: Bool = false
+  
+  var body: some View {
+    // Search view
+    HStack {
+      HStack {
+        Image(systemName: "magnifyingglass")
         
-        func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-            guard let searchBarText = searchBar.text else { return }
-            text = searchBarText
-            searchBar.resignFirstResponder()
-        }
+        TextField("search", text: $searchText, onEditingChanged: { isEditing in
+          self.showCancelButton = true
+        }, onCommit: {
+          print("onCommit")
+        }).foregroundColor(.primary)
         
-        func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-            searchBar.setShowsCancelButton(false, animated: true)
+        Button(action: {
+          self.searchText = ""
+        }) {
+          Image(systemName: "xmark.circle.fill").opacity(searchText == "" ? 0 : 1)
         }
-        
-        func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-            searchBar.resignFirstResponder()
+      }
+      .padding(EdgeInsets(top: 8, leading: 6, bottom: 8, trailing: 6))
+      .foregroundColor(.secondary)
+      .background(Color(.secondarySystemBackground))
+      .cornerRadius(10.0)
+      
+      if showCancelButton  {
+        Button("Cancel") {
+          UIApplication.shared.endEditing(true) // this must be placed before the other commands here
+          self.searchText = ""
+          self.showCancelButton = false
         }
+        .foregroundColor(Color(.systemBlue))
+      }
     }
+    .padding(.horizontal)
+      .navigationBarHidden(showCancelButton) // .animation(.default) // animation does not work properly
+  }
+  
 }
+
 
 private extension SearchBarView {
-    
-    struct Constants {
-        static let placeholder = "Search"
-    }
+  struct Constants {
+    static let placeholder = "Search"
+  }
 }
+
+extension UIApplication {
+  func endEditing(_ force: Bool) {
+    self.windows
+      .filter{$0.isKeyWindow}
+      .first?
+      .endEditing(force)
+  }
+}
+
+struct ResignKeyboardOnDragGesture: ViewModifier {
+  var gesture = DragGesture().onChanged{_ in
+    UIApplication.shared.endEditing(true)
+  }
+  func body(content: Content) -> some View {
+    content.gesture(gesture)
+  }
+}
+
+extension View {
+  func resignKeyboardOnDragGesture() -> some View {
+    return modifier(ResignKeyboardOnDragGesture())
+  }
+}
+
+#if DEBUG
+struct SearchBarView_Previews: PreviewProvider {
+  @State static var searchText = "Search"
+  static var previews: some View {
+    SearchBarView(searchText: $searchText)
+  }
+}
+#endif
