@@ -9,6 +9,10 @@
     <img src="https://user-images.githubusercontent.com/20865566/57108236-1ae2a780-6d00-11e9-9032-f4963ef49868.png" alt="Logo">
   </a>
 
+ <p align="center">
+   <img src="https://user-images.githubusercontent.com/20865566/91925098-37179f80-eccc-11ea-8083-9064f778e8ee.png" alt="Banner">
+  </p>
+
   <p align="center">
     <a href="https://github.com/breel93/Fave_iOS/issues">Report Bug</a>
     ·
