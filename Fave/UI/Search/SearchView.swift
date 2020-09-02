@@ -15,7 +15,6 @@ struct SearchView: View {
       VStack{
         SearchBarView(searchText: $viewModel.searchText)
           .padding([.leading, .trailing], 8)
-        
         ArticlesList(articles: viewModel.articles)
       }
       .navigationBarTitle(Text(Constants.title), displayMode:.automatic)

@@ -34,7 +34,7 @@ struct ArticleItem: View {
             Text(verbatim: article.title ?? "")
               .foregroundColor(.primary)
               .font(.caption)
-              .lineLimit(3)
+//              .lineLimit(3)
             Text(verbatim: article.source?.name ?? "")
               .frame(alignment: .trailing)
               .foregroundColor(.black)
